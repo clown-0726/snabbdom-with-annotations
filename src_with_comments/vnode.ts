@@ -11,12 +11,12 @@ import {Hero} from './modules/hero'
 export type Key = string | number;
 
 export interface VNode {
-  sel: string | undefined;
-  data: VNodeData | undefined;
-  children: Array<VNode | string> | undefined;
-  elm: Node | undefined;
-  text: string | undefined;
-  key: Key | undefined;
+  sel: string | undefined; // 选择器
+  data: VNodeData | undefined; // 数据的绑定,可以有以下类型：attribute、props、eventlistner、class、dataset、hook
+  children: Array<VNode | string> | undefined; // 子vnode
+  elm: Node | undefined; // 对真实dom的引用
+  text: string | undefined; // 节点文本数据
+  key: Key | undefined; // key 用于不同vnode之间的比对
 }
 
 export interface VNodeData {

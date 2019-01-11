@@ -6,7 +6,8 @@ export type VNodeStyle = Record<string, string> & {
   remove?: Record<string, string>
 }
 
-var raf = (typeof window !== 'undefined' && window.requestAnimationFrame) || setTimeout;
+// Bindig `requestAnimationFrame` like this fixes a bug in IE/Edge. See #360 and #409.
+var raf = (typeof window !== 'undefined' && (window.requestAnimationFrame).bind(window)) || setTimeout;
 var nextFrame = function(fn: any) { raf(function() { raf(fn); }); };
 var reflowForced = false;
 
@@ -14,6 +15,11 @@ function setNextFrame(obj: any, prop: string, val: any): void {
   nextFrame(function() { obj[prop] = val; });
 }
 
+/**
+ * 核心方法
+ * @param oldVnode 
+ * @param vnode 
+ */
 function updateStyle(oldVnode: VNode, vnode: VNode): void {
   var cur: any, name: string, elm = vnode.elm,
       oldStyle = (oldVnode.data as VNodeData).style,
@@ -34,6 +40,7 @@ function updateStyle(oldVnode: VNode, vnode: VNode): void {
       }
     }
   }
+  
   for (name in style) {
     cur = style[name];
     if (name === 'delayed' && style.delayed) {

@@ -11,6 +11,14 @@ declare global {
 
 export type Attrs = Record<string, string | number | boolean>
 
+
+// var booleanAttrs = ["allowfullscreen", "async", "autofocus", "autoplay", "checked", "compact", "controls", "declare",
+//                 "default", "defaultchecked", "defaultmuted", "defaultselected", "defer", "disabled", "draggable",
+//                 "enabled", "formnovalidate", "hidden", "indeterminate", "inert", "ismap", "itemscope", "loop", "multiple",
+//                 "muted", "nohref", "noresize", "noshade", "novalidate", "nowrap", "open", "pauseonexit", "readonly",
+//                 "required", "reversed", "scoped", "seamless", "selected", "sortable", "spellcheck", "translate",
+//                 "truespeed", "typemustmatch", "visible"];
+
 const xlinkNS = 'http://www.w3.org/1999/xlink';
 const xmlNS = 'http://www.w3.org/XML/1998/namespace';
 const colonChar = 58;
@@ -21,8 +29,10 @@ function updateAttrs(oldVnode: VNode, vnode: VNode): void {
       oldAttrs = (oldVnode.data as VNodeData).attrs,
       attrs = (vnode.data as VNodeData).attrs;
 
+  // 如果新节点的 attrs 和旧节点的 attrs 都不存在或者一样，则直接返回
   if (!oldAttrs && !attrs) return;
   if (oldAttrs === attrs) return;
+  // ???
   oldAttrs = oldAttrs || {};
   attrs = attrs || {};
 
@@ -30,12 +40,17 @@ function updateAttrs(oldVnode: VNode, vnode: VNode): void {
   for (key in attrs) {
     const cur = attrs[key];
     const old = oldAttrs[key];
+
     if (old !== cur) {
+      // 这个根据新的属性去更新老的属性
       if (cur === true) {
         elm.setAttribute(key, "");
       } else if (cur === false) {
         elm.removeAttribute(key);
+      
+      // 否则去添加新的属性
       } else {
+        // 处理svg和xml的命名空间问题
         if (key.charCodeAt(0) !== xChar) {
           elm.setAttribute(key, cur);
         } else if (key.charCodeAt(3) === colonChar) {
