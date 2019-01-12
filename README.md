@@ -1,3 +1,7 @@
+# self docs
+- http://www.qiutianaimeili.com/html/page/2018/05/iadkijfuaic.html
+
+
 # Snabbdom
 
 A virtual DOM library with focus on simplicity, modularity, powerful features
