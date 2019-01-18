@@ -5,13 +5,16 @@ import vnode, {VNode, VNodeData, Key} from './vnode';
 import * as is from './is';
 import htmlDomApi, {DOMAPI} from './htmldomapi';
 
+// 封装判断是与不是 undefined
 function isUndef(s: any): boolean { return s === undefined; }
 function isDef(s: any): boolean { return s !== undefined; }
 
 type VNodeQueue = Array<VNode>;
 
+// 空vnode
 const emptyNode = vnode('', {}, [], undefined, undefined);
 
+// 当 vnode 的 key 和选择器 sel 相等的时候，表示是同一个vnode
 function sameVnode(vnode1: VNode, vnode2: VNode): boolean {
   return vnode1.key === vnode2.key && vnode1.sel === vnode2.sel;
 }
@@ -20,6 +23,7 @@ function isVnode(vnode: any): vnode is VNode {
   return vnode.sel !== undefined;
 }
 
+// {"a": 1, "b": 2}
 type KeyToIndexMap = {[key: string]: number};
 
 type ArraysOf<T> = {
@@ -40,14 +44,34 @@ function createKeyToOldIdx(children: Array<VNode>, beginIdx: number, endIdx: num
   return map;
 }
 
+/**
+ export interface Module {
+  pre: PreHook;
+  create: CreateHook;
+  update: UpdateHook;
+  destroy: DestroyHook;
+  remove: RemoveHook;
+  post: PostHook;
+}
+
+hooks 首先是一个 array 类型，并且其元素必须包含在在 Module 所拥有的 key 中
+
+keyof ref: https://www.jianshu.com/p/ee2e90a45a67
+ */
 const hooks: (keyof Module)[] = ['create', 'update', 'remove', 'destroy', 'pre', 'post'];
 
 export {h} from './h';
 export {thunk} from './thunk';
 
+/**
+ * 整个snabbdom暴露这一个 init 方法出去
+ * @param modules 
+ * @param domApi 
+ */
 export function init(modules: Array<Partial<Module>>, domApi?: DOMAPI) {
   let i: number, j: number, cbs = ({} as ModuleHooks);
 
+  // 
   const api: DOMAPI = domApi !== undefined ? domApi : htmlDomApi;
 
   for (i = 0; i < hooks.length; ++i) {
@@ -286,18 +310,25 @@ export function init(modules: Array<Partial<Module>>, domApi?: DOMAPI) {
     }
   }
 
+  /**
+   * init 方法最终返回patch函数
+   */
   return function patch(oldVnode: VNode | Element, vnode: VNode): VNode {
     let i: number, elm: Node, parent: Node;
     const insertedVnodeQueue: VNodeQueue = [];
+
     for (i = 0; i < cbs.pre.length; ++i) cbs.pre[i]();
 
+    // 如果不是vnode则创建一个新的空 vnode
     if (!isVnode(oldVnode)) {
       oldVnode = emptyNodeAt(oldVnode);
     }
 
+    // 如果是一个 vnode 的时候，去比较其内部属性内容的不同
     if (sameVnode(oldVnode, vnode)) {
       patchVnode(oldVnode, vnode, insertedVnodeQueue);
     } else {
+      // 如果不一样，则先找到老节点的父节点
       elm = oldVnode.elm as Node;
       parent = api.parentNode(elm);
 
@@ -309,6 +340,7 @@ export function init(modules: Array<Partial<Module>>, domApi?: DOMAPI) {
       }
     }
 
+    // 
     for (i = 0; i < insertedVnodeQueue.length; ++i) {
       (((insertedVnodeQueue[i].data as VNodeData).hook as Hooks).insert as any)(insertedVnodeQueue[i]);
     }
