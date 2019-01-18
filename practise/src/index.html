@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: gap: https://ssl.gstatic.com 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; media-src *; img-src 'self' data: content:;">
+    <meta http-equiv="Content-Security-Policy" script-src='unsafe-inline' ;>
+    <title>Snabbdom reading</title>
+    <script src="../node_modules/snabbdom/dist/snabbdom.js"></script>
+    <script src="../node_modules/snabbdom/dist/snabbdom-class.js"></script>
+    <script src="../node_modules/snabbdom/dist/snabbdom-props.js"></script>
+    <script src="../node_modules/snabbdom/dist/snabbdom-attributes.js"></script>
+    <script src="../node_modules/snabbdom/dist/snabbdom-style.js"></script>
+    <script src="../node_modules/snabbdom/dist/snabbdom-eventlisteners.js"></script>
+    <script src="../node_modules/snabbdom/dist/h.js"></script>
+
+    
+
+    <style>
+        .active {
+            color: red
+        }
+    </style>
+</head>
+
+<body>
+    <button onclick="switchNode()">Click me</button>
+
+    <h1>try snabbdom</h1>
+
+    <section id="container"></section>
+
+    <script src="./index.js"></script>
+</body>
+
+</html>
