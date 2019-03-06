@@ -33,14 +33,16 @@ export function h(sel: any, b?: any, c?: any): VNode {
 
   var data: VNodeData = {}, children: any, text: any, i: number;
 
-  // 如果最后一个参数不为空，表示一点存在子节点
+  // 如果最后一个参数不为空，表示一定存在子节点
+  // 三个参数的情况  sel , data , children | text
   if (c !== undefined) {
     data = b;
     if (is.array(c)) { children = c; } // 说明是元素子节点
     else if (is.primitive(c)) { text = c; } // 说明是文本节点
     else if (c && c.sel) { children = [c]; } // ？？？
 
-    // 只有两个参数的情况
+    // 两个参数的情况 : sel , children | text
+    // 两个参数的情况 : sel , data
   } else if (b !== undefined) {
     if (is.array(b)) { children = b; } // 说明是元素子节点
     else if (is.primitive(b)) { text = b; } // 说明是文本节点

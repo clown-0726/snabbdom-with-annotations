@@ -14,10 +14,14 @@ function invokeHandler(handler: any, vnode?: VNode, event?: Event): void {
   } else if (typeof handler === "object") {
     // call handler with arguments
     if (typeof handler[0] === "function") {
+      // handler为数组的情况。 eg : handler = [fn,arg1,arg2]
+      // 第一项为函数说明后面的项为想要传的参数
       // special case for single argument for performance
       if (handler.length === 2) {
+        // 当长度为2的时候，用call，优化性能
         handler[0].call(vnode, handler[1], event, vnode);
       } else {
+        // 组装参数，用 apply 调用
         var args = handler.slice(1);
         args.push(event);
         args.push(vnode);
@@ -26,28 +30,34 @@ function invokeHandler(handler: any, vnode?: VNode, event?: Event): void {
     } else {
       // call multiple handlers
       for (var i = 0; i < handler.length; i++) {
-        invokeHandler(handler[i]);
+        invokeHandler(handler[i], vnode, event);
       }
     }
   }
 }
 
+// handleEvent 主要负责转发，去除 on 里面对应的事件处理函数，进行调用
 function handleEvent(event: Event, vnode: VNode) {
-  var name = event.type,
+  var name = event.type,  // e.g: click
       on = (vnode.data as VNodeData).on;
 
   // call event handler(s) if exists
-  if (on && on[name]) {
+  if (on && on[name]) { // on['click']
     invokeHandler(on[name], vnode, event);
   }
 }
 
 function createListener() {
-  return function handler(event: Event) {
+  return function handler(event: Event) { // 这个闭包函数会作为 事件处理函数 绑定到元素上，当事件触发的时候会执行这个函数
     handleEvent(event, (handler as any).vnode);
   }
 }
 
+/**
+ * 核心方法
+ * @param oldVnode
+ * @param vnode 
+ */
 function updateEventListeners(oldVnode: VNode, vnode?: VNode): void {
   var oldOn = (oldVnode.data as VNodeData).on,
       oldListener = (oldVnode as any).listener,
@@ -81,7 +91,8 @@ function updateEventListeners(oldVnode: VNode, vnode?: VNode): void {
 
   // add new listeners which has not already attached
   if (on) {
-    // reuse existing listener or create new
+    // reuse existing listener or create new 
+    // handler(event: Event)
     var listener = (vnode as any).listener = (oldVnode as any).listener || createListener();
     // update vnode for listener
     listener.vnode = vnode;

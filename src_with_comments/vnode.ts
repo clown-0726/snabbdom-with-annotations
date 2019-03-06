@@ -16,18 +16,26 @@ export interface VNode {
   children: Array<VNode | string> | undefined; // 子vnode
   elm: Node | undefined; // 对真实dom的引用
   text: string | undefined; // 节点文本数据
-  key: Key | undefined; // key 用于不同vnode之间的比对
+  key: Key | undefined; // key , 唯一值，为了优化性能
 }
 
 export interface VNodeData {
+  // 属性 能直接用 . 访问的
   props?: Props;
+  // 属性
   attrs?: Attrs;
+  // 样式类
   class?: Classes;
+  // 样式
   style?: VNodeStyle;
+  // 数据
   dataset?: Dataset;
+  // 绑定的事件
   on?: On;
+
   hero?: Hero;
   attachData?: AttachData;
+  // 钩子
   hook?: Hooks;
   key?: Key;
   ns?: string; // for SVGs
@@ -41,6 +49,7 @@ export function vnode(sel: string | undefined,
                       children: Array<VNode | string> | undefined,
                       text: string | undefined,
                       elm: Element | Text | undefined): VNode {
+  // 如果data不为空，则取data.key作为当前node的唯一识别码
   let key = data === undefined ? undefined : data.key;
   return {sel: sel, data: data, children: children,
           text: text, elm: elm, key: key};

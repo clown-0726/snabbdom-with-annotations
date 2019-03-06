@@ -25,6 +25,7 @@ function updateStyle(oldVnode: VNode, vnode: VNode): void {
       oldStyle = (oldVnode.data as VNodeData).style,
       style = (vnode.data as VNodeData).style;
 
+  // 如果新节点的 style 和旧节点的 style 都不存在或者一样，则直接返回
   if (!oldStyle && !style) return;
   if (oldStyle === style) return;
   oldStyle = oldStyle || {} as VNodeStyle;
